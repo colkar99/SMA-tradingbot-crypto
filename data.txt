@@ -1,0 +1,92 @@
+place market order params
+{"side":"BUY","symbol":"DOGEUSDT","quoteOrderQty":"1"(Amount to pay),"type":"MARKET","sideEffectType":"MARGIN_BUY"}
+
+Request URL: https://www.binance.com/bapi/margin/v1/private/margin/margin-buy/borrowable
+req
+quoteOrderQty: "10"
+side: "BUY"
+sideEffectType: "MARGIN_BUY"
+symbol: "DOGEUSDT"
+type: "MARKET"
+res
+{"code":"000000","message":null,"messageDetail":null,"data":{"marginUid":"205135325","assetName":"USDT","asset":"0.00912000","requiredBorrowAmount":"9.99088000"},"success":true}
+
+
+place order response client
+{"code":"000000","message":null,"messageDetail":null,"data":{"symbol":"DOGEUSDT","orderId":"1715355460","clientOrderId":"web_89ec065dd4b04b208838dcba156e7694","transactTime":"1629541290709","price":"0.00000000","origQty":"30.60000000","executedQty":"30.60000000","cummulativeQuoteQty":"9.98141400","status":"FILLED","timeInForce":"GTC","type":"MARKET","side":"BUY","oldFills":null,"marginBuyBorrowAsset":"USDT","marginBuyBorrowAmount":"9.99088000","orderOcoResponse":null},"success":true}
+
+///////////////
+asset info 
+[Object: null prototype] {
+      asset: 'DOGE',
+      free: '30.5694',
+      locked: '0',
+      borrowed: '0',
+      interest: '0',
+      netAsset: '30.5694'
+    }
+///////////
+stop loss Sell order place    
+req
+{"side":"SELL","symbol":"DOGEUSDT","quantity":"61.1","type":"STOP_LOSS_LIMIT","stopPrice":"0.31809","price":"0.31736","timeInForce":"GTC","sideEffectType":"AUTO_REPAY"}
+
+price: "0.31736"(Limit)
+quantity: "30.5"(Amount)
+side: "SELL"
+sideEffectType: "AUTO_REPAY"
+stopPrice: "0.31809"(stop)
+symbol: "DOGEUSDT"
+timeInForce: "GTC"
+type: "STOP_LOSS_LIMIT"
+res
+{"code":"000000","message":null,"messageDetail":null,"data":{"symbol":"DOGEUSDT","orderId":"1715435125","clientOrderId":"web_d97e33e9a2d54b218af4b9c707b2eaeb","transactTime":"1629542664221","price":null,"origQty":null,"executedQty":null,"cummulativeQuoteQty":null,"status":null,"timeInForce":null,"type":null,"side":null,"oldFills":null,"marginBuyBorrowAsset":null,"marginBuyBorrowAmount":null,"orderOcoResponse":null},"success":true}
+//////////////
+cancel sl order req
+{"symbols":["DOGEUSDT"],"orderIds":[1715435125]}
+res
+{"code":"000000","message":null,"messageDetail":null,"data":{"errors":[],"corrects":[{"orderId":"1715435125","symbol":"DOGEUSDT","msg":"027006/撤单成功","origClientOrderId":"web_d97e33e9a2d54b218af4b9c707b2eaeb","clientOrderId":"web_44ee07c6f8bd4ccfa25c6b0f5e8b6d7b","transactTime":null,"price":"0.31736000","origQty":"61.10000000","executedQty":"0.00000000","cummulativeQuoteQty":"0.00000000","status":"CANCELED","timeInForce":"GTC","type":"STOP_LOSS_LIMIT","side":"SELL"}]},"success":true}
+////
+market exit order
+req 
+quoteOrderQty: "19.410859"
+side: "SELL"
+sideEffectType: "AUTO_REPAY"
+symbol: "DOGEUSDT"
+type: "MARKET"
+res
+{"code":"000000","message":null,"messageDetail":null,"data":{"symbol":"DOGEUSDT","orderId":"1715676618","clientOrderId":"web_776285e9cb134f489a1bf45d58aebc84","transactTime":"1629544325353","price":"0.00000000","origQty":"61.00000000","executedQty":"61.00000000","cummulativeQuoteQty":"19.27722000","status":"FILLED","timeInForce":"GTC","type":"MARKET","side":"SELL","oldFills":null,"marginBuyBorrowAsset":null,"marginBuyBorrowAmount":null,"orderOcoResponse":null},"success":true}
+
+
+
+Place market order
+res{
+  symbol: 'TRXUSDT',
+  orderId: 1210899134,
+  clientOrderId: 'IvrwD8gTA0li8R9mY5M60P',
+  transactTime: 1629625292174,
+  price: '0',
+  origQty: '144.6',
+  executedQty: '144.6',
+  cummulativeQuoteQty: '12.998094',
+  status: 'FILLED',
+  timeInForce: 'GTC',
+  type: 'MARKET',
+  side: 'BUY',
+  fills: [
+    {
+      price: '0.08989',
+      qty: '144.6',
+      commission: '0.1446',
+      commissionAsset: 'TRX'
+    }
+  ],
+  isIsolated: false
+}
+
+{
+  symbol: 'TRXUSDT',
+  orderId: 1211069020,
+  clientOrderId: 'sapi_1d3efe7afb4f420eb82ca75504c0b3c',
+  transactTime: 1629631595475,
+  isIsolated: false
+}
