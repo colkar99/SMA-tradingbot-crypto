@@ -37,7 +37,7 @@ app.use((err, req, res, next) => {
   // res.status(500).json(err);
   res.status(500).send(err);
 });
-server.listen(3000, () => {
+server.listen(process.env.PORT || 3000, () => {
   mailer.pingMailServer();
   // mailer.sendMail("Hello World");
   console.log(`Server running at :${3000}`);
