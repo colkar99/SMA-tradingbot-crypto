@@ -194,10 +194,16 @@ async function cancelSlandPlaceMarketOrder(order, openOrder) {
         symbol: order.pairName,
         type: "MARKET",
         side: order.orderType == "BUY" ? "SELL" : "BUY",
-        quantity: toFixed(
-          order.cummulativeQuoteQty / currentPrice[openOrder.symbol],
-          pairNames[order.pairName].decimalCountLot
-        ),
+        quantity:
+          order.orderType == "BUY"
+            ? toFixed(
+                await getFreeQuantity(order.baseAsset),
+                pairNames[order.pairName].decimalCountLot
+              )
+            : toFixed(
+                order.cummulativeQuoteQty / currentPrice[openOrder.symbol],
+                pairNames[order.pairName].decimalCountLot
+              ),
         sideEffectType: "AUTO_REPAY",
       };
       let cliRes = await client.marginOrder(marketOrder);
@@ -263,23 +269,30 @@ async function longEntry(req, res, next) {
         qty += +key.qty;
         commission += +key.commission;
       }
+      order.baseAsset = await getBaseAndQuote(order.pairName, "base");
+      order.quoteAsset = await getBaseAndQuote(order.pairName, "quote");
       ePrice = ePrice / cliRes.fills.length;
       order.entryPrice = ePrice;
       order.entryOrderStatus = cliRes.status;
       order.entryOrderId = cliRes.orderId;
-      order.quantity = qty - commission;
       order.cummulativeQuoteQty = cliRes.cummulativeQuoteQty;
+      order.quantity = toFixed(
+        await getFreeQuantity(order.baseAsset),
+        pairNames[order.pairName].decimalCountLot
+      );
+
       await marketBuySellOrderLog(order);
 
       //Stoploss order practise
-      let slQty = toFixed(
-        +order.quantity,
-        pairNames[order.pairName].decimalCountLot
-      );
-      order.quantity = +slQty;
+      // let slQty = toFixed(
+      //   +order.quantity,
+      //   pairNames[order.pairName].decimalCountLot
+      // );
+      // order.quantity = +slQty;
 
       //   let stopPrice = (0.1 / 100) * +0.08475 + +0.08475;
       let stopPrice;
+      let slQty;
       if (order.orderType == "BUY") {
         stopPrice = (0.2 / 100) * +order.slPrice + +order.slPrice;
       } else if (order.orderType == "SELL") {
@@ -290,10 +303,6 @@ async function longEntry(req, res, next) {
         );
       }
 
-      // let price = +order.slPrice;
-
-      //   let price = 0.08475;
-
       let stopLossOrder = {
         side:
           order.orderType == "BUY"
@@ -302,7 +311,7 @@ async function longEntry(req, res, next) {
             ? "BUY"
             : "",
         symbol: order.pairName,
-        quantity: slQty,
+        quantity: order.orderType == "BUY" ? order.quantity : slQty,
         type: "STOP_LOSS_LIMIT",
         stopPrice: +toFixed(+stopPrice, +order.slPrice.countDecimals()),
         price: +order.slPrice,
@@ -654,6 +663,7 @@ exports.getPairFilters = async (req, res, next) => {
       "TRXUSDT",
     ];
     const pairs = await client.exchangeInfo();
+
     if (!pairs.symbols) {
       return;
     }
@@ -693,12 +703,67 @@ exports.getPairFilters = async (req, res, next) => {
     next(err);
   }
 };
+//get base and quote asset name
+async function getBaseAndQuote(pairName, type) {
+  try {
+    // throw new Error("Manual error by karthik");
+    // await testError2(req, res, next);
+    let base = "";
+    let quote = "";
+    if (pairName[pairName.length - 1] == "T") {
+      let lengthToSplice = pairName.length - 4;
+      base = pairName.slice(0, lengthToSplice);
+      quote = "USDT";
+    } else {
+      let lengthToSplice = pairName.length - 3;
+      base = pairName.slice(0, lengthToSplice);
+      quote = "BTC";
+    }
+    if (type == "base") res(base);
+    if (type == "quote") res(quote);
+    // console.log(await client.marginAccountInfo());
+  } catch (err) {
+    next(err);
+  }
+}
 //Error testing function
-// exports.testError = async (req, res, next) => {
-//   try {
-//     throw new Error("Manual error by karthik");
-//     // await testError2(req, res, next);
-//   } catch (err) {
-//     next(err);
-//   }
-// };
+async function getFreeQuantity(name) {
+  return new Promise(async (res, rej) => {
+    try {
+      let val = await client.marginAccountInfo();
+      res(val.userAssets.find((a) => a.asset == name).free);
+      // console.log(await client.marginAccountInfo());
+    } catch (err) {
+      next(err);
+    }
+  });
+}
+//Error testing function
+exports.testError = async (req, res, next) => {
+  try {
+    // throw new Error("Manual error by karthik");
+    // await testError2(req, res, next);
+    console.log(await getFreeQuantity("ADA"));
+    // console.log(await client.marginAccountInfo());
+  } catch (err) {
+    next(err);
+  }
+};
+
+//test trading view logs
+exports.tradingViewSignal = async (req, res, next) => {
+  try {
+    console.log(req.body);
+    const log = new Log({
+      heading: `NEW SIGNAL FROM TRADING VIEW`,
+      description: `NEW SIGNAL FROM TRADING VIEW`,
+      ticker: req.body.ticker,
+      log: JSON.stringify(req.body),
+    });
+    await log.save();
+
+    res.status(200).send("Success");
+  } catch {
+    next(err);
+  }
+};
