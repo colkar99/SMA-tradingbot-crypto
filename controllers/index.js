@@ -26,46 +26,46 @@ const mongoose = require("mongoose");
 const Order = require("../model/order");
 const Log = require("../model/log");
 let pairNames = {
-  ETHBTC: { tick_size: 0.000001, lot_size: 0.001, decimalCountLot: 3 },
-  LTCBTC: { tick_size: 0.000001, lot_size: 0.01, decimalCountLot: 2 },
-  BNBBTC: { tick_size: 0.000001, lot_size: 0.01, decimalCountLot: 2 },
+  ETHBTC: { tick_size: 0.000001, lot_size: 0.0001, decimalCountLot: 4 },
+  LTCBTC: { tick_size: 0.000001, lot_size: 0.001, decimalCountLot: 3 },
+  BNBBTC: { tick_size: 0.000001, lot_size: 0.001, decimalCountLot: 3 },
   NEOBTC: { tick_size: 0.000001, lot_size: 0.01, decimalCountLot: 2 },
-  BTCUSDT: { tick_size: 0.01, lot_size: 0.000001, decimalCountLot: 6 },
-  ETHUSDT: { tick_size: 0.01, lot_size: 0.00001, decimalCountLot: 5 },
-  LINKBTC: { tick_size: 1e-8, lot_size: 0.1, decimalCountLot: 1 },
-  ETCBTC: { tick_size: 1e-7, lot_size: 0.01, decimalCountLot: 2 },
+  BTCUSDT: { tick_size: 0.01, lot_size: 0.00001, decimalCountLot: 5 },
+  ETHUSDT: { tick_size: 0.01, lot_size: 0.0001, decimalCountLot: 4 },
+  LINKBTC: { tick_size: 1e-7, lot_size: 0.01, decimalCountLot: 2 },
+  ETCBTC: { tick_size: 0.000001, lot_size: 0.01, decimalCountLot: 2 },
   ZECBTC: { tick_size: 0.000001, lot_size: 0.001, decimalCountLot: 3 },
   XRPBTC: { tick_size: 1e-8, lot_size: 1, decimalCountLot: 0 },
-  BNBUSDT: { tick_size: 0.01, lot_size: 0.0001, decimalCountLot: 4 },
-  NEOUSDT: { tick_size: 0.001, lot_size: 0.001, decimalCountLot: 3 },
-  ADABTC: { tick_size: 1e-8, lot_size: 1, decimalCountLot: 0 },
+  BNBUSDT: { tick_size: 0.1, lot_size: 0.001, decimalCountLot: 3 },
+  NEOUSDT: { tick_size: 0.01, lot_size: 0.01, decimalCountLot: 2 },
+  ADABTC: { tick_size: 1e-8, lot_size: 0.1, decimalCountLot: 1 },
   XLMBTC: { tick_size: 1e-8, lot_size: 1, decimalCountLot: 0 },
-  LTCUSDT: { tick_size: 0.01, lot_size: 0.00001, decimalCountLot: 5 },
-  QTUMUSDT: { tick_size: 0.001, lot_size: 0.001, decimalCountLot: 3 },
-  ADAUSDT: { tick_size: 0.0001, lot_size: 0.01, decimalCountLot: 2 },
-  XRPUSDT: { tick_size: 0.0001, lot_size: 0.01, decimalCountLot: 2 },
-  IOTAUSDT: { tick_size: 0.0001, lot_size: 0.01, decimalCountLot: 2 },
-  ONTUSDT: { tick_size: 0.0001, lot_size: 0.01, decimalCountLot: 2 },
-  TRXUSDT: { tick_size: 0.00001, lot_size: 0.1, decimalCountLot: 1 },
-  ETCUSDT: { tick_size: 0.001, lot_size: 0.001, decimalCountLot: 3 },
-  VETBTC: { tick_size: 1e-8, lot_size: 1, decimalCountLot: 0 },
-  VETUSDT: { tick_size: 0.00001, lot_size: 0.1, decimalCountLot: 1 },
-  LINKUSDT: { tick_size: 0.001, lot_size: 0.001, decimalCountLot: 3 },
-  ZILUSDT: { tick_size: 0.00001, lot_size: 0.1, decimalCountLot: 1 },
-  IOSTUSDT: { tick_size: 0.000001, lot_size: 1, decimalCountLot: 0 },
-  THETAUSDT: { tick_size: 0.001, lot_size: 0.001, decimalCountLot: 3 },
-  ALGOUSDT: { tick_size: 0.0001, lot_size: 0.01, decimalCountLot: 2 },
+  LTCUSDT: { tick_size: 0.1, lot_size: 0.001, decimalCountLot: 3 },
+  QTUMUSDT: { tick_size: 0.001, lot_size: 0.1, decimalCountLot: 1 },
+  ADAUSDT: { tick_size: 0.001, lot_size: 0.1, decimalCountLot: 1 },
+  XRPUSDT: { tick_size: 0.0001, lot_size: 1, decimalCountLot: 0 },
+  IOTAUSDT: { tick_size: 0.0001, lot_size: 1, decimalCountLot: 0 },
+  ONTUSDT: { tick_size: 0.0001, lot_size: 1, decimalCountLot: 0 },
+  TRXUSDT: { tick_size: 0.00001, lot_size: 10, decimalCountLot: 0 },
+  ETCUSDT: { tick_size: 0.01, lot_size: 0.01, decimalCountLot: 2 },
+  VETBTC: { tick_size: 1e-8, lot_size: 10, decimalCountLot: 0 },
+  VETUSDT: { tick_size: 0.00001, lot_size: 10, decimalCountLot: 0 },
+  LINKUSDT: { tick_size: 0.01, lot_size: 0.01, decimalCountLot: 2 },
+  ZILUSDT: { tick_size: 0.00001, lot_size: 10, decimalCountLot: 0 },
+  IOSTUSDT: { tick_size: 0.00001, lot_size: 10, decimalCountLot: 0 },
+  THETAUSDT: { tick_size: 0.001, lot_size: 0.1, decimalCountLot: 1 },
+  ALGOUSDT: { tick_size: 0.0001, lot_size: 1, decimalCountLot: 0 },
   CHZBTC: { tick_size: 1e-8, lot_size: 1, decimalCountLot: 0 },
-  CHZUSDT: { tick_size: 0.00001, lot_size: 0.1, decimalCountLot: 1 },
-  XTZUSDT: { tick_size: 0.0001, lot_size: 0.01, decimalCountLot: 2 },
-  BCHBTC: { tick_size: 0.000001, lot_size: 0.001, decimalCountLot: 3 },
-  SOLBTC: { tick_size: 1e-8, lot_size: 0.1, decimalCountLot: 1 },
-  SOLUSDT: { tick_size: 0.001, lot_size: 0.001, decimalCountLot: 3 },
-  EGLDBTC: { tick_size: 0.000001, lot_size: 0.001, decimalCountLot: 3 },
-  EGLDUSDT: { tick_size: 0.01, lot_size: 0.0001, decimalCountLot: 4 },
-  AVAXBTC: { tick_size: 1e-8, lot_size: 0.1, decimalCountLot: 1 },
-  AAVEBTC: { tick_size: 0.000001, lot_size: 0.01, decimalCountLot: 2 },
-  NEARUSDT: { tick_size: 0.0001, lot_size: 0.01, decimalCountLot: 2 },
+  CHZUSDT: { tick_size: 0.0001, lot_size: 1, decimalCountLot: 0 },
+  XTZUSDT: { tick_size: 0.001, lot_size: 0.1, decimalCountLot: 1 },
+  BCHBTC: { tick_size: 0.00001, lot_size: 0.001, decimalCountLot: 3 },
+  SOLBTC: { tick_size: 1e-7, lot_size: 0.01, decimalCountLot: 2 },
+  SOLUSDT: { tick_size: 0.01, lot_size: 0.01, decimalCountLot: 2 },
+  EGLDBTC: { tick_size: 0.000001, lot_size: 0.01, decimalCountLot: 2 },
+  EGLDUSDT: { tick_size: 0.01, lot_size: 0.01, decimalCountLot: 2 },
+  AVAXBTC: { tick_size: 1e-7, lot_size: 0.01, decimalCountLot: 2 },
+  AAVEBTC: { tick_size: 0.000001, lot_size: 0.001, decimalCountLot: 3 },
+  NEARUSDT: { tick_size: 0.001, lot_size: 0.1, decimalCountLot: 1 },
 };
 exports.login = async (req, res, next) => {
   res.send("Helloe worls");
@@ -609,6 +609,90 @@ function toFixed(num, fixed) {
   return num.toString().match(re)[0];
 }
 
+exports.getPairFilters = async (req, res, next) => {
+  try {
+    const pairNames = [
+      "BTCUSDT",
+      "AAVEBTC",
+      "ADABTC",
+      "AVAXBTC",
+      "BCHBTC",
+      "BNBBTC",
+      "CHZBTC",
+      "EGLDBTC",
+      "ETCBTC",
+      "ETHBTC",
+      "LINKBTC",
+      "LTCBTC",
+      "NEOBTC",
+      "SOLBTC",
+      "VETBTC",
+      "XLMBTC",
+      "XRPBTC",
+      "ZECBTC",
+      "ADAUSDT",
+      "ALGOUSDT",
+      "BNBUSDT",
+      "CHZUSDT",
+      "EGLDUSDT",
+      "ETCUSDT",
+      "ETHUSDT",
+      "IOSTUSDT",
+      "IOTAUSDT",
+      "LINKUSDT",
+      "LTCUSDT",
+      "NEARUSDT",
+      "NEOUSDT",
+      "ONTUSDT",
+      "QTUMUSDT",
+      "SOLUSDT",
+      "THETAUSDT",
+      "VETUSDT",
+      "XRPUSDT",
+      "XTZUSDT",
+      "ZILUSDT",
+      "TRXUSDT",
+    ];
+    const pairs = await client.exchangeInfo();
+    if (!pairs.symbols) {
+      return;
+    }
+
+    const exchangePairs = {};
+    pairs.symbols.forEach((pair) => {
+      if (pairNames.includes(pair.symbol)) {
+        const pairInfo = {};
+
+        const priceFilter = pair.filters.find(
+          (f) => f.filterType === "PRICE_FILTER"
+        );
+        if (priceFilter) {
+          pairInfo.tick_size = parseFloat(priceFilter.tickSize);
+          //   pairInfo.decimalCountPrice = parseFloat(
+          //     priceFilter.tickSize
+          //   ).countDecimals();
+        }
+
+        const lotSize = pair.filters.find((f) => f.filterType === "LOT_SIZE");
+        if (priceFilter) {
+          pairInfo.lot_size = parseFloat(lotSize.stepSize);
+          pairInfo.decimalCountLot = parseFloat(
+            lotSize.stepSize
+          ).countDecimals();
+        }
+
+        exchangePairs[pair.symbol] = pairInfo;
+      }
+    });
+
+    console.log(`Binance Margin: pairs synced: ${pairs.symbols.length}`);
+    console.log(exchangePairs);
+    res.send(exchangePairs);
+    //   exchangePairs = exchangePairs;
+  } catch (err) {
+    next(err);
+  }
+};
 //Error testing function
 // exports.testError = async (req, res, next) => {
 //   try {
