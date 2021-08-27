@@ -719,11 +719,12 @@ async function getBaseAndQuote(pairName, type) {
       base = pairName.slice(0, lengthToSplice);
       quote = "BTC";
     }
-    if (type == "base") res(base);
-    if (type == "quote") res(quote);
+    if (type == "base") return base;
+    if (type == "quote") return quote;
     // console.log(await client.marginAccountInfo());
   } catch (err) {
-    next(err);
+    console.log(err);
+    // next(err);
   }
 }
 //Error testing function
@@ -743,8 +744,8 @@ exports.testError = async (req, res, next) => {
   try {
     // throw new Error("Manual error by karthik");
     // await testError2(req, res, next);
-    console.log(await getFreeQuantity("ADA"));
-    // console.log(await client.marginAccountInfo());
+    // console.log(await getFreeQuantity("ADA"));
+    console.log(await client.marginAccountInfo());
   } catch (err) {
     next(err);
   }
@@ -761,7 +762,6 @@ exports.tradingViewSignal = async (req, res, next) => {
       log: JSON.stringify(req.body),
     });
     await log.save();
-
     res.status(200).send("Success");
   } catch {
     next(err);
