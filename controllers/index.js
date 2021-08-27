@@ -121,6 +121,10 @@ async function exitEntry(req, res, next) {
         slOrderStatus: "OPEN",
         isErrorHappend: false,
       });
+      if (order.length == 0)
+        throw new Error(
+          "No live order present to exit please the orders manually"
+        );
       if (order.length >= 2)
         throw new Error(
           "There are more than 1 open orders in our system please look on it"
