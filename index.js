@@ -29,6 +29,7 @@ mongoose
   .then((res) => console.log("db connected successfully"))
   .catch((err) => console.log(err));
 app.get("/pingTest", (req, res) => {
+  console.log("Cron-job pinged!!!!!!!");
   res.send("Pinged Successfully");
 });
 app.use("/api", indexRouter);
