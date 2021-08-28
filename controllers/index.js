@@ -355,6 +355,7 @@ async function initializeOrderData(req) {
           positionSizeCurrency: req.body.data.usdt,
           positionSizeBTC: req.body.data.btc,
           tradeCurrencyType: req.body.tradeCurrencyType,
+          timeFrameInMin: req.body.timeFrameInMin,
         })
       );
     } catch (err) {

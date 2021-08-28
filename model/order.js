@@ -5,6 +5,7 @@ const OrderSchema = mongoose.Schema(
     pairName: { type: String, required: true },
     baseAsset: { type: String },
     quoteAsset: { type: String },
+    timeFrameInMin: { type: String },
     entryOrderId: { type: String, required: true },
     entryOrderStatus: {
       type: String,
