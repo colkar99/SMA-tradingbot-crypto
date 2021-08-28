@@ -28,6 +28,9 @@ mongoose
   })
   .then((res) => console.log("db connected successfully"))
   .catch((err) => console.log(err));
+app.get("/pingTest", (req, res) => {
+  res.send("Pinged Successfully");
+});
 app.use("/api", indexRouter);
 app.use((err, req, res, next) => {
   console.error("FROM index", err.stack);
