@@ -73,6 +73,7 @@ exports.login = async (req, res, next) => {
 
 exports.postTradingView = async (req, res, next) => {
   try {
+    console.log("REQ DATA", req.body);
     req.body.tradeCurrencyType =
       req.body.ticker[req.body.ticker.length - 1] == "T" ? "USDT" : "BTC";
     // let data = await findPositionSize(req.body);
