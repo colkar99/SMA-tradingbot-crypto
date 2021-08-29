@@ -22,8 +22,8 @@ exports.sendMail = async (sub, body) => {
       from: `SMA TRADINGBOT ${process.env.EMAIL_USERNAME}`, // sender address
       to: `${process.env.RECEIVER_MAIL_ID}`, // list of receivers
       subject: `${sub} ✔`, // Subject line
-      text: body, // plain text body
-      // html: "<b>There is a new article. It's about sending emails, check it out!</b>", // html body
+      // text: body, // plain text body
+      html: body, // html body
     });
   } catch (err) {
     console.log(err);

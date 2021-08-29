@@ -46,13 +46,13 @@ let pairNames = {
   XRPUSDT: { tick_size: 0.0001, lot_size: 1, decimalCountLot: 0 },
   IOTAUSDT: { tick_size: 0.0001, lot_size: 1, decimalCountLot: 0 },
   ONTUSDT: { tick_size: 0.0001, lot_size: 1, decimalCountLot: 0 },
-  TRXUSDT: { tick_size: 0.00001, lot_size: 10, decimalCountLot: 0 },
+  TRXUSDT: { tick_size: 0.00001, lot_size: 0.1, decimalCountLot: 1 },
   ETCUSDT: { tick_size: 0.01, lot_size: 0.01, decimalCountLot: 2 },
-  VETBTC: { tick_size: 1e-8, lot_size: 10, decimalCountLot: 0 },
-  VETUSDT: { tick_size: 0.00001, lot_size: 10, decimalCountLot: 0 },
+  VETBTC: { tick_size: 1e-8, lot_size: 1, decimalCountLot: 0 },
+  VETUSDT: { tick_size: 0.00001, lot_size: 0.1, decimalCountLot: 1 },
   LINKUSDT: { tick_size: 0.01, lot_size: 0.01, decimalCountLot: 2 },
-  ZILUSDT: { tick_size: 0.00001, lot_size: 10, decimalCountLot: 0 },
-  IOSTUSDT: { tick_size: 0.00001, lot_size: 10, decimalCountLot: 0 },
+  ZILUSDT: { tick_size: 0.00001, lot_size: 0.1, decimalCountLot: 1 },
+  IOSTUSDT: { tick_size: 0.00001, lot_size: 1, decimalCountLot: 0 },
   THETAUSDT: { tick_size: 0.001, lot_size: 0.1, decimalCountLot: 1 },
   ALGOUSDT: { tick_size: 0.0001, lot_size: 1, decimalCountLot: 0 },
   CHZBTC: { tick_size: 1e-8, lot_size: 1, decimalCountLot: 0 },
@@ -89,14 +89,14 @@ exports.postTradingView = async (req, res, next) => {
     if (req.body.message == "ENTRY LONG") {
       let result = await longEntry(req, res, next);
       //   await syncPairInfo();
-      let message = mailerFormatter.emailFormat("longEntryOrder", result);
+      let message = mailerFormatter.emailFormat("entryOrder", result);
       mailer.sendMail("LONG ENTRY ORDER EXECUTED WITH SL ORDER", message);
     }
     //SELL
     else if (req.body.message == "ENTRY SHORT") {
       let result = await longEntry(req, res, next);
       //   await syncPairInfo();
-      let message = mailerFormatter.emailFormat("songEntryOrder", result);
+      let message = mailerFormatter.emailFormat("entryOrder", result);
       mailer.sendMail("SHORT ENTRY ORDER EXECUTED WITH SL ORDER", message);
       // await placeSlOrder();
     } //Exit
@@ -760,14 +760,41 @@ exports.testError = async (req, res, next) => {
 //test trading view logs
 exports.tradingViewSignal = async (req, res, next) => {
   try {
-    console.log(req.body);
-    const log = new Log({
-      heading: `NEW SIGNAL FROM TRADING VIEW`,
-      description: `NEW SIGNAL FROM TRADING VIEW`,
-      ticker: req.body.ticker,
-      log: JSON.stringify(req.body),
-    });
-    await log.save();
+    let result = {
+      entryOrderStatus: "FILLED",
+      orderType: "SELL",
+      entryPrice: 2.865,
+      slOrderStatus: "OPEN",
+      exitOrderStatus: "NOT_STARTED",
+      feesInPercent: 0.15,
+      tradeCurrencyType: "USDT",
+      globalCurrency: "$",
+      isActive: true,
+      isDelete: false,
+      isErrorHappend: false,
+      _id: "612ab1e566fece0016acf645",
+      pairName: "ADAUSDT",
+      entryDate: "2021-08-28T22:00:05.431Z",
+      slPrice: 2.47,
+      slPercent: 13.697,
+      riskPerTrade: 10.15,
+      totalCapital: 1015,
+      positionSizeCurrency: 74,
+      positionSizeBTC: 0.00151209,
+      timeFrameInMin: "60",
+      baseAsset: "ADA",
+      quoteAsset: "USDT",
+      entryOrderId: "2211713214",
+      cummulativeQuoteQty: 73.917,
+      quantity: 26,
+      slOrderId: "2211713426",
+      createdAt: "2021-08-28T22:00:06.633Z",
+      updatedAt: "2021-08-28T22:00:06.633Z",
+      __v: 0,
+    };
+    let message = mailerFormatter.emailFormat("longEntryOrder", result);
+    mailer.sendMail("LONG ENTRY ORDER EXECUTED WITH SL ORDER", message);
+
     res.status(200).send("Success");
   } catch {
     next(err);
