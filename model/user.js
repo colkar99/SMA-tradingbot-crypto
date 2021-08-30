@@ -2,10 +2,11 @@ const mongoose = require("mongoose");
 
 const UserSchema = mongoose.Schema(
   {
+    name: { type: String, required: true },
     email: { type: String, required: true },
-    phone: { type: String, required: true },
+    phone: { type: String },
     phoneCode: { type: String },
-    password: { type: String },
+    password: { type: String, required: true },
     apiKey: { type: String },
     apiSecret: { type: String },
     subscriptionStatus: { type: Boolean, default: false },
@@ -14,6 +15,7 @@ const UserSchema = mongoose.Schema(
     slPercent: { type: Number, default: 1 },
     slLimitPercent: { type: Number, default: 0.2 },
     subscribeTimeFrame: { type: Number, default: 2 },
+    token: { type: String },
     //
   },
   { timestamps: true }

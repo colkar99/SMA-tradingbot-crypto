@@ -10,6 +10,7 @@ var server = http.createServer(app);
 const mailer = require("./helper/mailer");
 const mailerFormatter = require("./helper/emailFormating");
 const indexRouter = require("./routes/index");
+const userRouter = require("./routes/user");
 
 app.use(express.json());
 app.use(
@@ -33,12 +34,14 @@ app.get("/pingTest", (req, res) => {
   res.send("Pinged Successfully");
 });
 app.use("/api", indexRouter);
+app.use("/api/v1/user", userRouter);
 app.use((err, req, res, next) => {
-  console.error("FROM index", err.stack);
+  console.error("FROM index", err.status);
   let message = mailerFormatter.emailFormat("errorHandler", err.stack);
   mailer.sendMail("ERROR HAPPENED IMMIDIATE ATTENTION NEEDED", message);
   //SEND ERROR TO MAIL
   // res.status(500).json(err);
+
   res.status(500).send(err);
 });
 server.listen(process.env.PORT || 3000, () => {
