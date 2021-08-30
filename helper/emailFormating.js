@@ -91,10 +91,12 @@ exports.emailFormat = (format, data) => {
               <th class="header">Position size$</th>
               <th class="header">Position size(BTC)</th>
               <th class="header">Entry</th>
+              <th class="header">Exit</th>
               <th class="header">Quantity</th>
               <th class="header">C-Quantity</th>
               <th class="header">MOS</th>
               <th class="header">SLLOS</th>
+              <th class="header">EOS</th>
               <th class="header">Date</th>
             </tr>
           </thead>
@@ -109,16 +111,23 @@ exports.emailFormat = (format, data) => {
               <td>${data.positionSizeCurrency}$</td>
               <td>${data.positionSizeBTC}</td>
               <td>${data.entryPrice}</td>
+              <td>${data.exitPrice}</td>
               <td>${data.quantity}</td>
               <td>${data.cummulativeQuoteQty}</td>
               <td>${data.entryOrderStatus}</td>
               <td>${data.slOrderStatus}</td>
+              <td>${data.exitOrderStatus}</td>
               <td>${new Date(data.entryDate).toLocaleString()}</td>
             </tr>
           </tbody>
         </table>
       </div>
-      
+      <strong>Note</strong>
+      <p>MOS - Market order status(Entry order)</p>
+      <p>SLLOS - Stoploss limit order status</p>
+      <p>SL - Stoploss</p>
+      <p>C-Quantity - Consider this as quantity for sell orders</p>
+      <p>EOS - Exit order status</p>
       </body>
       </html>
         `;
@@ -150,10 +159,12 @@ exports.emailFormat = (format, data) => {
               <th class="header">Position size$</th>
               <th class="header">Position size(BTC)</th>
               <th class="header">Entry</th>
+              <th class="header">Exit</th>
               <th class="header">Quantity</th>
               <th class="header">C-Quantity</th>
               <th class="header">MOS</th>
               <th class="header">SLLOS</th>
+              <th class="header">EOS</th>
               <th class="header">Date</th>
             </tr>
           </thead>
@@ -168,16 +179,24 @@ exports.emailFormat = (format, data) => {
               <td>${data.positionSizeCurrency}$</td>
               <td>${data.positionSizeBTC}</td>
               <td>${data.entryPrice}</td>
+              <td>${data.exitPrice}</td>
               <td>${data.quantity}</td>
               <td>${data.cummulativeQuoteQty}</td>
               <td>${data.entryOrderStatus}</td>
               <td>${data.slOrderStatus}</td>
+              <td>${data.exitOrderStatus}</td>
+
               <td>${new Date(data.entryDate).toLocaleString()}</td>
             </tr>
           </tbody>
         </table>
       </div>
-      
+      <strong>Note</strong>
+      <p>MOS - Market order status(Entry order)</p>
+      <p>SLLOS - Stoploss limit order status</p>
+      <p>SL - Stoploss</p>
+      <p>C-Quantity - Consider this as quantity for sell orders</p>
+      <p>EOS - Exit order status</p>
       </body>
       </html>
         `;
