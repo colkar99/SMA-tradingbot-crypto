@@ -97,7 +97,8 @@ exports.emailFormat = (format, data) => {
               <th class="header">MOS</th>
               <th class="header">SLLOS</th>
               <th class="header">EOS</th>
-              <th class="header">Date</th>
+              <th class="header">Entry Date<th>
+              <th class="header">Exit Date<th>
             </tr>
           </thead>
           <tbody>
@@ -118,6 +119,7 @@ exports.emailFormat = (format, data) => {
               <td>${data.slOrderStatus}</td>
               <td>${data.exitOrderStatus}</td>
               <td>${new Date(data.entryDate).toLocaleString()}</td>
+              <td>${new Date(data.exitDate).toLocaleString()}</td>
             </tr>
           </tbody>
         </table>
@@ -165,7 +167,8 @@ exports.emailFormat = (format, data) => {
               <th class="header">MOS</th>
               <th class="header">SLLOS</th>
               <th class="header">EOS</th>
-              <th class="header">Date</th>
+              <th class="header">Entry Date</th>
+              <th class="header">Exit Date</th>
             </tr>
           </thead>
           <tbody>
@@ -185,8 +188,9 @@ exports.emailFormat = (format, data) => {
               <td>${data.entryOrderStatus}</td>
               <td>${data.slOrderStatus}</td>
               <td>${data.exitOrderStatus}</td>
-
               <td>${new Date(data.entryDate).toLocaleString()}</td>
+              <td>${new Date(data.exitDate).toLocaleString()}</td>
+
             </tr>
           </tbody>
         </table>
