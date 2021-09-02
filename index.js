@@ -40,7 +40,7 @@ app.get("/pingTest", (req, res) => {
 app.use("/api", indexRouter);
 app.use("/api/v1/user", userRouter);
 app.use((err, req, res, next) => {
-  console.error("FROM index", err.status);
+  console.error("Error stack", err.stack);
   let message = mailerFormatter.emailFormat("errorHandler", err.stack);
   mailer.sendMail("ERROR HAPPENED IMMIDIATE ATTENTION NEEDED", message);
   //SEND ERROR TO MAIL
