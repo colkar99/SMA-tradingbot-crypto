@@ -5,7 +5,10 @@ const http = require("http");
 const mongoose = require("mongoose");
 
 const express = require("express");
+var cors = require("cors");
 const app = express();
+app.use(cors());
+
 var server = http.createServer(app);
 const mailer = require("./helper/mailer");
 const mailerFormatter = require("./helper/emailFormating");
@@ -29,6 +32,7 @@ mongoose
   })
   .then((res) => console.log("db connected successfully"))
   .catch((err) => console.log(err));
+
 app.get("/pingTest", (req, res) => {
   console.log("Cron-job pinged!!!!!!!");
   res.send("Pinged Successfully");

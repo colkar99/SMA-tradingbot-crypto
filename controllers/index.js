@@ -282,7 +282,7 @@ async function longEntry(req, res, next) {
       order.entryOrderId = cliRes.orderId;
       order.cummulativeQuoteQty = cliRes.cummulativeQuoteQty;
       order.quantity = toFixed(
-        await getFreeQuantity(order.baseAsset),
+        cliRes.executedQty,
         pairNames[order.pairName].decimalCountLot
       );
 
@@ -748,10 +748,11 @@ async function getFreeQuantity(name) {
 //Error testing function
 exports.testError = async (req, res, next) => {
   try {
-    // throw new Error("Manual error by karthik");
-    // await testError2(req, res, next);
-    // console.log(await getFreeQuantity("ADA"));
-    console.log(await client.marginAccountInfo());
+    console.log(
+      await client.marginTradesHistory({
+        symbol: "SOLBTC",
+      })
+    );
   } catch (err) {
     next(err);
   }
