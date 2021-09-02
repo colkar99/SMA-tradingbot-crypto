@@ -201,10 +201,7 @@ async function cancelSlandPlaceMarketOrder(order, openOrder) {
         side: order.orderType == "BUY" ? "SELL" : "BUY",
         quantity:
           order.orderType == "BUY"
-            ? toFixed(
-                await getFreeQuantity(order.baseAsset),
-                pairNames[order.pairName].decimalCountLot
-              )
+            ? toFixed(order.quantity, pairNames[order.pairName].decimalCountLot)
             : toFixed(
                 order.cummulativeQuoteQty / currentPrice[openOrder.symbol],
                 pairNames[order.pairName].decimalCountLot
@@ -225,7 +222,7 @@ async function cancelSlandPlaceMarketOrder(order, openOrder) {
       order.exitPrice = +ePrice;
       order.exitOrderStatus = cliRes.status;
       order.exitOrderId = cliRes.orderId;
-      order.exitQuantity = qty;
+      order.exitQuantity = cliRes.executedQty;
       order.isActive = false;
       order.exitDate = new Date();
 
@@ -303,7 +300,7 @@ async function longEntry(req, res, next) {
       } else if (order.orderType == "SELL") {
         stopPrice = +order.slPrice - (0.2 / 100) * +order.slPrice;
         slQty = toFixed(
-          (order.cummulativeQuoteQty - commission) / +order.slPrice,
+          order.cummulativeQuoteQty / +order.slPrice,
           pairNames[order.pairName].decimalCountLot
         );
       }
