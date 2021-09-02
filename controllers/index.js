@@ -88,6 +88,8 @@ exports.postTradingView = async (req, res, next) => {
     //Buy
     if (req.body.message == "ENTRY LONG") {
       let result = await longEntry(req, res, next);
+      // console.log(await getFreeQuantity("IOST"));
+
       //   await syncPairInfo();
       let message = mailerFormatter.emailFormat("entryOrder", result);
       mailer.sendMail("LONG ENTRY ORDER EXECUTED WITH SL ORDER", message);
@@ -194,6 +196,8 @@ async function cancelSlandPlaceMarketOrder(order, openOrder) {
       let currentPrice = await client.prices();
       // console.log(currentPrice[openOrder.symbol]);
       order.slOrderStatus = "CANCELLED";
+      let slOqty =
+        +order.cummulativeQuoteQty - (0.15 / +order.cummulativeQuoteQty) * 100;
       let marketOrder = {
         newClientOrderId: order._id,
         symbol: order.pairName,
@@ -203,7 +207,7 @@ async function cancelSlandPlaceMarketOrder(order, openOrder) {
           order.orderType == "BUY"
             ? toFixed(order.quantity, pairNames[order.pairName].decimalCountLot)
             : toFixed(
-                order.cummulativeQuoteQty / currentPrice[openOrder.symbol],
+                slOqty / currentPrice[openOrder.symbol],
                 pairNames[order.pairName].decimalCountLot
               ),
         sideEffectType: "AUTO_REPAY",
@@ -279,7 +283,7 @@ async function longEntry(req, res, next) {
       order.entryOrderId = cliRes.orderId;
       order.cummulativeQuoteQty = cliRes.cummulativeQuoteQty;
       order.quantity = toFixed(
-        cliRes.executedQty,
+        +cliRes.executedQty - +commission,
         pairNames[order.pairName].decimalCountLot
       );
 
@@ -295,12 +299,14 @@ async function longEntry(req, res, next) {
       //   let stopPrice = (0.1 / 100) * +0.08475 + +0.08475;
       let stopPrice;
       let slQty;
+      let slOqty =
+        +order.cummulativeQuoteQty - (0.15 / +order.cummulativeQuoteQty) * 100;
       if (order.orderType == "BUY") {
         stopPrice = (0.2 / 100) * +order.slPrice + +order.slPrice;
       } else if (order.orderType == "SELL") {
         stopPrice = +order.slPrice - (0.2 / 100) * +order.slPrice;
         slQty = toFixed(
-          order.cummulativeQuoteQty / +order.slPrice,
+          +slOqty / +order.slPrice,
           pairNames[order.pairName].decimalCountLot
         );
       }
