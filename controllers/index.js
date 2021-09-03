@@ -1,16 +1,3 @@
-// const Binance = require("node-binance-api");
-// const binance = new Binance().options({
-//   APIKEY: process.env.APIKEY,
-//   APISECRET: process.env.APISECRET,
-//   useServerTime: true,
-// });
-
-// const Binance = require("node-binance-api-testnet");
-// const binance = new Binance().options({
-//   APIKEY: process.env.TEST_API_KEY2,
-//   APISECRET: process.env.TEST_API_SECRET,
-// });
-
 // Authenticated client, can make signed calls
 const Binance = require("binance-api-node").default;
 const mailer = require("../helper/mailer");
@@ -228,6 +215,7 @@ async function cancelSlandPlaceMarketOrder(order, openOrder) {
       order.exitOrderId = cliRes.orderId;
       order.exitQuantity = cliRes.executedQty;
       order.isActive = false;
+      order.isRead = true;
       order.exitDate = new Date();
 
       // order.cummulativeQuoteQty = cliRes.cummulativeQuoteQty;
@@ -751,11 +739,8 @@ async function getFreeQuantity(name) {
 //Error testing function
 exports.testError = async (req, res, next) => {
   try {
-    console.log(
-      await client.marginTradesHistory({
-        symbol: "SOLBTC",
-      })
-    );
+    let resr = await Order.updateMany({ isRead: false });
+    res.send(resr);
   } catch (err) {
     next(err);
   }

@@ -1,4 +1,3 @@
-const Binance = require("node-binance-api");
 require("dotenv").config();
 
 const http = require("http");

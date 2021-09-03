@@ -70,3 +70,17 @@ exports.getAllOrders = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.isRead = async (req, res, next) => {
+  try {
+    let order = await Order.findByIdAndUpdate(
+      { _id: req.body._id },
+      { isRead: true }
+    );
+    if (!order) return res.status(404).json({ message: "No Orders found" });
+
+    res.status(201).json({ message: "Success" });
+  } catch (err) {
+    next(err);
+  }
+};
