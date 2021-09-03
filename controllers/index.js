@@ -12,48 +12,7 @@ const client = Binance({
 const mongoose = require("mongoose");
 const Order = require("../model/order");
 const Log = require("../model/log");
-let pairNames = {
-  ETHBTC: { tick_size: 0.000001, lot_size: 0.0001, decimalCountLot: 4 },
-  LTCBTC: { tick_size: 0.000001, lot_size: 0.001, decimalCountLot: 3 },
-  BNBBTC: { tick_size: 0.000001, lot_size: 0.001, decimalCountLot: 3 },
-  NEOBTC: { tick_size: 0.000001, lot_size: 0.01, decimalCountLot: 2 },
-  BTCUSDT: { tick_size: 0.01, lot_size: 0.00001, decimalCountLot: 5 },
-  ETHUSDT: { tick_size: 0.01, lot_size: 0.0001, decimalCountLot: 4 },
-  LINKBTC: { tick_size: 1e-7, lot_size: 0.01, decimalCountLot: 2 },
-  ETCBTC: { tick_size: 0.000001, lot_size: 0.01, decimalCountLot: 2 },
-  ZECBTC: { tick_size: 0.000001, lot_size: 0.001, decimalCountLot: 3 },
-  XRPBTC: { tick_size: 1e-8, lot_size: 1, decimalCountLot: 0 },
-  BNBUSDT: { tick_size: 0.1, lot_size: 0.001, decimalCountLot: 3 },
-  NEOUSDT: { tick_size: 0.01, lot_size: 0.01, decimalCountLot: 2 },
-  ADABTC: { tick_size: 1e-8, lot_size: 0.1, decimalCountLot: 1 },
-  XLMBTC: { tick_size: 1e-8, lot_size: 1, decimalCountLot: 0 },
-  LTCUSDT: { tick_size: 0.1, lot_size: 0.001, decimalCountLot: 3 },
-  QTUMUSDT: { tick_size: 0.001, lot_size: 0.1, decimalCountLot: 1 },
-  ADAUSDT: { tick_size: 0.001, lot_size: 0.1, decimalCountLot: 1 },
-  XRPUSDT: { tick_size: 0.0001, lot_size: 1, decimalCountLot: 0 },
-  IOTAUSDT: { tick_size: 0.0001, lot_size: 1, decimalCountLot: 0 },
-  ONTUSDT: { tick_size: 0.0001, lot_size: 1, decimalCountLot: 0 },
-  TRXUSDT: { tick_size: 0.00001, lot_size: 0.1, decimalCountLot: 1 },
-  ETCUSDT: { tick_size: 0.01, lot_size: 0.01, decimalCountLot: 2 },
-  VETBTC: { tick_size: 1e-8, lot_size: 1, decimalCountLot: 0 },
-  VETUSDT: { tick_size: 0.00001, lot_size: 0.1, decimalCountLot: 1 },
-  LINKUSDT: { tick_size: 0.01, lot_size: 0.01, decimalCountLot: 2 },
-  ZILUSDT: { tick_size: 0.00001, lot_size: 0.1, decimalCountLot: 1 },
-  IOSTUSDT: { tick_size: 0.00001, lot_size: 1, decimalCountLot: 0 },
-  THETAUSDT: { tick_size: 0.001, lot_size: 0.1, decimalCountLot: 1 },
-  ALGOUSDT: { tick_size: 0.0001, lot_size: 1, decimalCountLot: 0 },
-  CHZBTC: { tick_size: 1e-8, lot_size: 1, decimalCountLot: 0 },
-  CHZUSDT: { tick_size: 0.0001, lot_size: 1, decimalCountLot: 0 },
-  XTZUSDT: { tick_size: 0.001, lot_size: 0.1, decimalCountLot: 1 },
-  BCHBTC: { tick_size: 0.00001, lot_size: 0.001, decimalCountLot: 3 },
-  SOLBTC: { tick_size: 1e-7, lot_size: 0.01, decimalCountLot: 2 },
-  SOLUSDT: { tick_size: 0.01, lot_size: 0.01, decimalCountLot: 2 },
-  EGLDBTC: { tick_size: 0.000001, lot_size: 0.01, decimalCountLot: 2 },
-  EGLDUSDT: { tick_size: 0.01, lot_size: 0.01, decimalCountLot: 2 },
-  AVAXBTC: { tick_size: 1e-7, lot_size: 0.01, decimalCountLot: 2 },
-  AAVEBTC: { tick_size: 0.000001, lot_size: 0.001, decimalCountLot: 3 },
-  NEARUSDT: { tick_size: 0.001, lot_size: 0.1, decimalCountLot: 1 },
-};
+
 exports.login = async (req, res, next) => {
   res.send("Helloe worls");
 };
@@ -181,6 +140,7 @@ async function cancelSlandPlaceMarketOrder(order, openOrder) {
         orderId: openOrder.orderId,
       });
       let currentPrice = await client.prices();
+      let decimalCountLot = await getQuantityFloatNo(order.pairName);
       // console.log(currentPrice[openOrder.symbol]);
       order.slOrderStatus = "CANCELLED";
       let slOqty =
@@ -192,10 +152,10 @@ async function cancelSlandPlaceMarketOrder(order, openOrder) {
         side: order.orderType == "BUY" ? "SELL" : "BUY",
         quantity:
           order.orderType == "BUY"
-            ? toFixed(order.quantity, pairNames[order.pairName].decimalCountLot)
+            ? toFixed(order.quantity, +decimalCountLot)
             : toFixed(
                 slOqty / currentPrice[openOrder.symbol],
-                pairNames[order.pairName].decimalCountLot
+                +decimalCountLot
               ),
         sideEffectType: "AUTO_REPAY",
       };
@@ -254,6 +214,8 @@ async function longEntry(req, res, next) {
       //   console.log(test);
 
       let cliRes = await client.marginOrder(marketOrder);
+      let decimalCountLot = await getQuantityFloatNo(order.pairName);
+
       console.log("Entry order", cliRes);
       let ePrice = 0;
       let qty = 0;
@@ -272,7 +234,7 @@ async function longEntry(req, res, next) {
       order.cummulativeQuoteQty = cliRes.cummulativeQuoteQty;
       order.quantity = toFixed(
         +cliRes.executedQty - +commission,
-        pairNames[order.pairName].decimalCountLot
+        +decimalCountLot
       );
 
       await marketBuySellOrderLog(order);
@@ -285,6 +247,7 @@ async function longEntry(req, res, next) {
       // order.quantity = +slQty;
 
       //   let stopPrice = (0.1 / 100) * +0.08475 + +0.08475;
+
       let stopPrice;
       let slQty;
       let slOqty =
@@ -293,10 +256,7 @@ async function longEntry(req, res, next) {
         stopPrice = (0.2 / 100) * +order.slPrice + +order.slPrice;
       } else if (order.orderType == "SELL") {
         stopPrice = +order.slPrice - (0.2 / 100) * +order.slPrice;
-        slQty = toFixed(
-          +slOqty / +order.slPrice,
-          pairNames[order.pairName].decimalCountLot
-        );
+        slQty = toFixed(+slOqty / +order.slPrice, +decimalCountLot);
       }
 
       let stopLossOrder = {
@@ -529,83 +489,6 @@ async function placeSlOrder(pairName) {
   });
 }
 
-async function syncPairInfo() {
-  const pairNames = [
-    "BTCUSDT",
-    "AAVEBTC",
-    "ADABTC",
-    "AVAXBTC",
-    "BCHBTC",
-    "BNBBTC",
-    "CHZBTC",
-    "EGLDBTC",
-    "ETCBTC",
-    "ETHBTC",
-    "LINKBTC",
-    "LTCBTC",
-    "NEOBTC",
-    "SOLBTC",
-    "VETBTC",
-    "XLMBTC",
-    "XRPBTC",
-    "ZECBTC",
-    "ADAUSDT",
-    "ALGOUSDT",
-    "BNBUSDT",
-    "CHZUSDT",
-    "EGLDUSDT",
-    "ETCUSDT",
-    "ETHUSDT",
-    "IOSTUSDT",
-    "IOTAUSDT",
-    "LINKUSDT",
-    "LTCUSDT",
-    "NEARUSDT",
-    "NEOUSDT",
-    "ONTUSDT",
-    "QTUMUSDT",
-    "SOLUSDT",
-    "THETAUSDT",
-    "VETUSDT",
-    "XRPUSDT",
-    "XTZUSDT",
-    "ZILUSDT",
-    "TRXUSDT",
-  ];
-  const pairs = await client.exchangeInfo();
-  if (!pairs.symbols) {
-    return;
-  }
-
-  const exchangePairs = {};
-  pairs.symbols.forEach((pair) => {
-    if (pairNames.includes(pair.symbol)) {
-      const pairInfo = {};
-
-      const priceFilter = pair.filters.find(
-        (f) => f.filterType === "PRICE_FILTER"
-      );
-      if (priceFilter) {
-        pairInfo.tick_size = parseFloat(priceFilter.tickSize);
-        //   pairInfo.decimalCountPrice = parseFloat(
-        //     priceFilter.tickSize
-        //   ).countDecimals();
-      }
-
-      const lotSize = pair.filters.find((f) => f.filterType === "LOT_SIZE");
-      if (priceFilter) {
-        pairInfo.lot_size = parseFloat(lotSize.stepSize);
-        pairInfo.decimalCountLot = parseFloat(lotSize.stepSize).countDecimals();
-      }
-
-      exchangePairs[pair.symbol] = pairInfo;
-    }
-  });
-
-  console.log(`Binance Margin: pairs synced: ${pairs.symbols.length}`);
-  console.log(exchangePairs);
-  //   exchangePairs = exchangePairs;
-}
 Number.prototype.countDecimals = function () {
   if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
   return this.toString().split(".")[1].length || 0;
@@ -614,6 +497,122 @@ function toFixed(num, fixed) {
   var re = new RegExp("^-?\\d+(?:.\\d{0," + (fixed || -1) + "})?");
   return num.toString().match(re)[0];
 }
+
+//get base and quote asset name
+async function getBaseAndQuote(pairName, type) {
+  try {
+    // throw new Error("Manual error by karthik");
+    // await testError2(req, res, next);
+    let base = "";
+    let quote = "";
+    if (pairName[pairName.length - 1] == "T") {
+      let lengthToSplice = pairName.length - 4;
+      base = pairName.slice(0, lengthToSplice);
+      quote = "USDT";
+    } else {
+      let lengthToSplice = pairName.length - 3;
+      base = pairName.slice(0, lengthToSplice);
+      quote = "BTC";
+    }
+    if (type == "base") return base;
+    if (type == "quote") return quote;
+    // console.log(await client.marginAccountInfo());
+  } catch (err) {
+    console.log(err);
+    // next(err);
+  }
+}
+//Error testing function
+async function getFreeQuantity(name) {
+  return new Promise(async (res, rej) => {
+    try {
+      let val = await client.marginAccountInfo();
+      res(val.userAssets.find((a) => a.asset == name).free);
+      // console.log(await client.marginAccountInfo());
+    } catch (err) {
+      next(err);
+    }
+  });
+}
+//GET quantity float numbers
+async function getQuantityFloatNo(name) {
+  return new Promise(async (res, rej) => {
+    try {
+      const pairs = await client.exchangeInfo();
+      if (!pairs.symbols) {
+        rej(false);
+      }
+      pairs.symbols.forEach((pair) => {
+        // console.log(pair);
+        let pairInfo = {};
+        if (pair.symbol == name) {
+          const lotSize = pair.filters.find((f) => f.filterType === "LOT_SIZE");
+          pairInfo.lot_size = parseFloat(lotSize.stepSize);
+          pairInfo.decimalCountLot = parseFloat(
+            lotSize.stepSize
+          ).countDecimals();
+          res(pairInfo.decimalCountLot);
+        }
+      });
+    } catch {
+      console.log(err);
+    }
+  });
+}
+//Error testing function
+exports.testError = async (req, res, next) => {
+  try {
+    // let resr = await Order.updateMany({ isRead: false });
+    // res.send(resr);
+    // console.log(await getQuantityFloatNo("ETCUSDT"));
+  } catch (err) {
+    next(err);
+  }
+};
+
+//test trading view logs
+exports.tradingViewSignal = async (req, res, next) => {
+  try {
+    let result = {
+      entryOrderStatus: "FILLED",
+      orderType: "SELL",
+      entryPrice: 2.865,
+      slOrderStatus: "OPEN",
+      exitOrderStatus: "NOT_STARTED",
+      feesInPercent: 0.15,
+      tradeCurrencyType: "USDT",
+      globalCurrency: "$",
+      isActive: true,
+      isDelete: false,
+      isErrorHappend: false,
+      _id: "612ab1e566fece0016acf645",
+      pairName: "ADAUSDT",
+      entryDate: "2021-08-28T22:00:05.431Z",
+      slPrice: 2.47,
+      slPercent: 13.697,
+      riskPerTrade: 10.15,
+      totalCapital: 1015,
+      positionSizeCurrency: 74,
+      positionSizeBTC: 0.00151209,
+      timeFrameInMin: "60",
+      baseAsset: "ADA",
+      quoteAsset: "USDT",
+      entryOrderId: "2211713214",
+      cummulativeQuoteQty: 73.917,
+      quantity: 26,
+      slOrderId: "2211713426",
+      createdAt: "2021-08-28T22:00:06.633Z",
+      updatedAt: "2021-08-28T22:00:06.633Z",
+      __v: 0,
+    };
+    let message = mailerFormatter.emailFormat("longEntryOrder", result);
+    mailer.sendMail("LONG ENTRY ORDER EXECUTED WITH SL ORDER", message);
+
+    res.status(200).send("Success");
+  } catch {
+    next(err);
+  }
+};
 
 exports.getPairFilters = async (req, res, next) => {
   try {
@@ -697,95 +696,6 @@ exports.getPairFilters = async (req, res, next) => {
     res.send(exchangePairs);
     //   exchangePairs = exchangePairs;
   } catch (err) {
-    next(err);
-  }
-};
-//get base and quote asset name
-async function getBaseAndQuote(pairName, type) {
-  try {
-    // throw new Error("Manual error by karthik");
-    // await testError2(req, res, next);
-    let base = "";
-    let quote = "";
-    if (pairName[pairName.length - 1] == "T") {
-      let lengthToSplice = pairName.length - 4;
-      base = pairName.slice(0, lengthToSplice);
-      quote = "USDT";
-    } else {
-      let lengthToSplice = pairName.length - 3;
-      base = pairName.slice(0, lengthToSplice);
-      quote = "BTC";
-    }
-    if (type == "base") return base;
-    if (type == "quote") return quote;
-    // console.log(await client.marginAccountInfo());
-  } catch (err) {
-    console.log(err);
-    // next(err);
-  }
-}
-//Error testing function
-async function getFreeQuantity(name) {
-  return new Promise(async (res, rej) => {
-    try {
-      let val = await client.marginAccountInfo();
-      res(val.userAssets.find((a) => a.asset == name).free);
-      // console.log(await client.marginAccountInfo());
-    } catch (err) {
-      next(err);
-    }
-  });
-}
-//Error testing function
-exports.testError = async (req, res, next) => {
-  try {
-    let resr = await Order.updateMany({ isRead: false });
-    res.send(resr);
-  } catch (err) {
-    next(err);
-  }
-};
-
-//test trading view logs
-exports.tradingViewSignal = async (req, res, next) => {
-  try {
-    let result = {
-      entryOrderStatus: "FILLED",
-      orderType: "SELL",
-      entryPrice: 2.865,
-      slOrderStatus: "OPEN",
-      exitOrderStatus: "NOT_STARTED",
-      feesInPercent: 0.15,
-      tradeCurrencyType: "USDT",
-      globalCurrency: "$",
-      isActive: true,
-      isDelete: false,
-      isErrorHappend: false,
-      _id: "612ab1e566fece0016acf645",
-      pairName: "ADAUSDT",
-      entryDate: "2021-08-28T22:00:05.431Z",
-      slPrice: 2.47,
-      slPercent: 13.697,
-      riskPerTrade: 10.15,
-      totalCapital: 1015,
-      positionSizeCurrency: 74,
-      positionSizeBTC: 0.00151209,
-      timeFrameInMin: "60",
-      baseAsset: "ADA",
-      quoteAsset: "USDT",
-      entryOrderId: "2211713214",
-      cummulativeQuoteQty: 73.917,
-      quantity: 26,
-      slOrderId: "2211713426",
-      createdAt: "2021-08-28T22:00:06.633Z",
-      updatedAt: "2021-08-28T22:00:06.633Z",
-      __v: 0,
-    };
-    let message = mailerFormatter.emailFormat("longEntryOrder", result);
-    mailer.sendMail("LONG ENTRY ORDER EXECUTED WITH SL ORDER", message);
-
-    res.status(200).send("Success");
-  } catch {
     next(err);
   }
 };
