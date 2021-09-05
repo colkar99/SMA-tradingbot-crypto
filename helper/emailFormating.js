@@ -97,8 +97,8 @@ exports.emailFormat = (format, data) => {
               <th class="header">MOS</th>
               <th class="header">SLLOS</th>
               <th class="header">EOS</th>
-              <th class="header">Entry Date<th>
-              <th class="header">Exit Date<th>
+              <th class="header">Entry Date</th>
+              <th class="header">Exit Date</th>
             </tr>
           </thead>
           <tbody>
