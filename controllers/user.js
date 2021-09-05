@@ -3,6 +3,8 @@ const Order = require("../model/order");
 const bcrypt = require("bcrypt");
 const saltRounds = +process.env.SALT;
 var jwt = require("jsonwebtoken");
+const Binance = require("binance-api-node").default;
+var client;
 
 exports.signUp = async (req, res, next) => {
   try {
@@ -62,10 +64,23 @@ exports.getAllOrders = async (req, res, next) => {
         $lte: new Date(end),
       };
     }
+    let user = await User.findOne({ _id: req.userData._id });
+    if (!user) return res.status(404).json({ message: "User not found" });
+    client = Binance({
+      apiKey: user.apiKey,
+      apiSecret: user.apiSecret,
+    });
+    let accountInfo = await client.marginAccountInfo();
+    // console.log(accountInfo.totalNetAssetOfBtc);
+    let usdtPrice = await client.prices();
+    const capital = +accountInfo.totalNetAssetOfBtc * +usdtPrice["BTCUSDT"];
 
     let orders = await Order.find(dateFilter).sort({ createdAt: -1 });
     if (!orders) return res.status(404).json({ message: "No Orders found" });
-    res.status(200).json({ message: "success", data: orders });
+
+    res
+      .status(200)
+      .json({ message: "success", data: orders, capital: capital.toFixed(2) });
   } catch (err) {
     next(err);
   }

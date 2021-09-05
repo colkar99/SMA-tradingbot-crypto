@@ -100,6 +100,7 @@ async function exitEntry(req, res, next) {
             exitOrderId: openOrder.orderId,
             exitOrderStatus: "FILLED",
             isActive: false,
+            isRead: false,
             exitDate: new Date(),
           }, // document to insert
           { upsert: true, new: true, runValidators: true }
@@ -175,7 +176,7 @@ async function cancelSlandPlaceMarketOrder(order, openOrder) {
       order.exitOrderId = cliRes.orderId;
       order.exitQuantity = cliRes.executedQty;
       order.isActive = false;
-      order.isRead = true;
+      order.isRead = false;
       order.exitDate = new Date();
 
       // order.cummulativeQuoteQty = cliRes.cummulativeQuoteQty;
@@ -563,7 +564,7 @@ async function getQuantityFloatNo(name) {
 exports.testError = async (req, res, next) => {
   try {
     // let resr = await Order.updateMany({ isRead: false });
-    // res.send(resr);
+    res.send("success");
     // console.log(await getQuantityFloatNo("ETCUSDT"));
   } catch (err) {
     next(err);
