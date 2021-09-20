@@ -56,6 +56,7 @@ const OrderSchema = mongoose.Schema(
     isActive: { type: Boolean, default: true },
     isDelete: { type: Boolean, default: false },
     isRead: { type: Boolean, default: false },
+    itemRemoved: { type: Boolean, default: false },
     isErrorHappend: { type: Boolean, default: false },
     // userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
     // firstName: { type: String, default: '' },

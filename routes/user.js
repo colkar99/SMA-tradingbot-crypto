@@ -8,6 +8,7 @@ router.post("/signup", userController.signUp);
 router.post("/signin", userController.signin);
 router.get("/getAllOrders", validateToken, userController.getAllOrders);
 router.post("/isRead", validateToken, userController.isRead);
+router.post("/removeItem", validateToken, userController.isRead);
 
 //
 module.exports = router;

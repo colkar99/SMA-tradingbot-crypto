@@ -218,6 +218,8 @@ async function longEntry(req, res, next) {
       let decimalCountLot = await getQuantityFloatNo(order.pairName);
 
       console.log("Entry order", cliRes);
+      console.log("Decimal count", decimalCountLot);
+
       let ePrice = 0;
       let qty = 0;
       let commission = 0;
@@ -238,7 +240,7 @@ async function longEntry(req, res, next) {
         +decimalCountLot
       );
 
-      await marketBuySellOrderLog(order);
+      // await marketBuySellOrderLog(order);
 
       //Stoploss order practise
       // let slQty = toFixed(
@@ -251,14 +253,18 @@ async function longEntry(req, res, next) {
 
       let stopPrice;
       let slQty;
+      // let slOqty =
+      //   +order.cummulativeQuoteQty - (0.15 / +order.cummulativeQuoteQty) * 100;
       let slOqty =
-        +order.cummulativeQuoteQty - (0.15 / +order.cummulativeQuoteQty) * 100;
+        +order.cummulativeQuoteQty - (0.15 / 100) * +order.cummulativeQuoteQty;
+      console.log("slOqty", slOqty);
       if (order.orderType == "BUY") {
         stopPrice = (0.2 / 100) * +order.slPrice + +order.slPrice;
       } else if (order.orderType == "SELL") {
         stopPrice = +order.slPrice - (0.2 / 100) * +order.slPrice;
         slQty = toFixed(+slOqty / +order.slPrice, +decimalCountLot);
       }
+      console.log("slQty", slQty);
 
       let stopLossOrder = {
         side:
@@ -572,42 +578,37 @@ exports.testError = async (req, res, next) => {
 };
 
 //test trading view logs
-exports.tradingViewSignal = async (req, res, next) => {
+exports.checkStopLossHit = async (req, res, next) => {
   try {
-    let result = {
-      entryOrderStatus: "FILLED",
-      orderType: "SELL",
-      entryPrice: 2.865,
-      slOrderStatus: "OPEN",
-      exitOrderStatus: "NOT_STARTED",
-      feesInPercent: 0.15,
-      tradeCurrencyType: "USDT",
-      globalCurrency: "$",
-      isActive: true,
-      isDelete: false,
-      isErrorHappend: false,
-      _id: "612ab1e566fece0016acf645",
-      pairName: "ADAUSDT",
-      entryDate: "2021-08-28T22:00:05.431Z",
-      slPrice: 2.47,
-      slPercent: 13.697,
-      riskPerTrade: 10.15,
-      totalCapital: 1015,
-      positionSizeCurrency: 74,
-      positionSizeBTC: 0.00151209,
-      timeFrameInMin: "60",
-      baseAsset: "ADA",
-      quoteAsset: "USDT",
-      entryOrderId: "2211713214",
-      cummulativeQuoteQty: 73.917,
-      quantity: 26,
-      slOrderId: "2211713426",
-      createdAt: "2021-08-28T22:00:06.633Z",
-      updatedAt: "2021-08-28T22:00:06.633Z",
-      __v: 0,
-    };
-    let message = mailerFormatter.emailFormat("longEntryOrder", result);
-    mailer.sendMail("LONG ENTRY ORDER EXECUTED WITH SL ORDER", message);
+    let orders = await Order.find({ isActive: true });
+    console.log(orders);
+    for (let key of orders) {
+      let openOrder = await client.marginGetOrder({
+        symbol: key.pairName,
+        orderId: key.slOrderId,
+      });
+      if (openOrder.status == "FILLED") {
+        let result = await Order.findOneAndUpdate(
+          { _id: key._id },
+          // find a document with that filter
+          {
+            slOrderStatus: "FILLED",
+            exitPrice: openOrder.stopPrice,
+            exitOrderId: openOrder.orderId,
+            exitOrderStatus: "FILLED",
+            isActive: false,
+            isRead: false,
+            exitDate: new Date(),
+          }, // document to insert
+          { upsert: true, new: true, runValidators: true }
+        );
+        //Send mail that order closed already
+        let message = mailerFormatter.emailFormat("orderCompleteSl", result);
+        mailer.sendMail("ORDER EXIT WITH SL HIT", message);
+      }
+    }
+    // let message = mailerFormatter.emailFormat("longEntryOrder", result);
+    // mailer.sendMail("LONG ENTRY ORDER EXECUTED WITH SL ORDER", message);
 
     res.status(200).send("Success");
   } catch {

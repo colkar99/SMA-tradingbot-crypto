@@ -7,7 +7,7 @@ router.get("/getSome", indexController.login);
 router.post("/from/trading-view", indexController.postTradingView);
 router.get("/testError", indexController.testError);
 router.get("/getPairFilters", indexController.getPairFilters);
-router.get("/tradingViewSignal", indexController.tradingViewSignal);
+router.get("/checkSlHit", indexController.checkStopLossHit);
 
 //
 module.exports = router;

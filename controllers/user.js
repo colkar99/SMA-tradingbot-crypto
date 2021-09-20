@@ -75,7 +75,7 @@ exports.getAllOrders = async (req, res, next) => {
     let usdtPrice = await client.prices();
     const capital = +accountInfo.totalNetAssetOfBtc * +usdtPrice["BTCUSDT"];
 
-    let orders = await Order.find(dateFilter).sort({ createdAt: -1 });
+    let orders = await Order.find(dateFilter).sort({ updatedAt: -1 });
     if (!orders) return res.status(404).json({ message: "No Orders found" });
 
     res
