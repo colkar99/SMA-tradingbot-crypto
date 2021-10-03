@@ -308,7 +308,7 @@ async function initializeOrderData(req) {
           entryOrderStatus: "INITIALIZE",
           entryDate: new Date(),
           slPrice: req.body.stopprice,
-          slPercent: req.body.data.sl,
+          slPercent: req.body.data.toFixed(2),
           riskPerTrade: req.body.data.riskPerTrade,
           totalCapital: req.body.data.capital,
           positionSizeCurrency: req.body.data.usdt,

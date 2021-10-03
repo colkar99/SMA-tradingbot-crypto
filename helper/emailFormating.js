@@ -39,7 +39,7 @@ exports.emailFormat = (format, data) => {
               <td>${data.orderType}</td>
               <td>${data.timeFrameInMin} Mins</td>
               <td>${data.totalCapital}$</td>
-              <td>${data.slPercent.toFixed(2)}%</td>
+              <td>${data.slPercent}%</td>
               <td>${data.riskPerTrade}$</td>
               <td>${data.positionSizeCurrency}$</td>
               <td>${data.positionSizeBTC}</td>
@@ -107,7 +107,7 @@ exports.emailFormat = (format, data) => {
               <td>${data.orderType}</td>
               <td>${data.timeFrameInMin} Mins</td>
               <td>${data.totalCapital}$</td>
-              <td>${data.slPercent.toFixed(2)}%</td>
+              <td>${data.slPercent}%</td>
               <td>${data.riskPerTrade}$</td>
               <td>${data.positionSizeCurrency}$</td>
               <td>${data.positionSizeBTC}</td>
@@ -177,7 +177,7 @@ exports.emailFormat = (format, data) => {
               <td>${data.orderType}</td>
               <td>${data.timeFrameInMin} Mins</td>
               <td>${data.totalCapital}$</td>
-              <td>${data.slPercent.toFixed(2)}%</td>
+              <td>${data.slPercent}%</td>
               <td>${data.riskPerTrade}$</td>
               <td>${data.positionSizeCurrency}$</td>
               <td>${data.positionSizeBTC}</td>
@@ -245,7 +245,7 @@ exports.emailFormat = (format, data) => {
               <td>${data.orderType}</td>
               <td>${data.timeFrameInMin} Mins</td>
               <td>${data.totalCapital}$</td>
-              <td>${data.slPercent.toFixed(2)}%</td>
+              <td>${data.slPercent}%</td>
               <td>${data.riskPerTrade}$</td>
               <td>${data.positionSizeCurrency}$</td>
               <td>${data.positionSizeBTC}</td>
