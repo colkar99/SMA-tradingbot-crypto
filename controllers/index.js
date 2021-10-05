@@ -110,7 +110,7 @@ async function exitEntry(req, res, next) {
         mailer.sendMail("ORDER EXIT WITH SL HIT", message);
 
         console.log(openOrder);
-      } else if (openOrder.status == "Canceled") {
+      } else if (openOrder.status == "CANCELED") {
         let result = await Order.findOneAndUpdate(
           { _id: order[0]._id }, // find a document with that filter
           { slOrderStatus: "CANCELLED", isActive: false, isErrorHappend: true }, // document to insert
@@ -300,6 +300,7 @@ async function initializeOrderData(req) {
     try {
       let side =
         req.body.message == "ENTRY LONG" ? "BUY" : "ENTRY SHORT" ? "SELL" : "";
+      console.log(req.body.data);
       res(
         new Order({
           orderType: side,
@@ -308,7 +309,7 @@ async function initializeOrderData(req) {
           entryOrderStatus: "INITIALIZE",
           entryDate: new Date(),
           slPrice: req.body.stopprice,
-          slPercent: req.body.data.toFixed(2),
+          slPercent: req.body.data.sl.toFixed(2),
           riskPerTrade: req.body.data.riskPerTrade,
           totalCapital: req.body.data.capital,
           positionSizeCurrency: req.body.data.usdt,
