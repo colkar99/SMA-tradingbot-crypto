@@ -281,7 +281,7 @@ async function longEntry(req, res, next) {
         sideEffectType: "AUTO_REPAY",
       };
       console.log(stopLossOrder);
-      console.log("STOP PRICE?????????", order.entryPrice);
+      // console.log("STOP PRICE?????????", order.entryPrice);
 
       let slOrderRes = await client.marginOrder(stopLossOrder);
       await stopLossBuySellOrderLog(order, slOrderRes);
