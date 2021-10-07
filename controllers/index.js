@@ -276,11 +276,13 @@ async function longEntry(req, res, next) {
         symbol: order.pairName,
         quantity: order.orderType == "BUY" ? order.quantity : slQty,
         type: "STOP_LOSS_LIMIT",
-        stopPrice: +toFixed(+stopPrice, +order.slPrice.countDecimals()),
+        stopPrice: +toFixed(+stopPrice, +order.entryPrice.countDecimals()),
         price: +order.slPrice,
         sideEffectType: "AUTO_REPAY",
       };
       console.log(stopLossOrder);
+      console.log("STOP PRICE?????????", order.entryPrice);
+
       let slOrderRes = await client.marginOrder(stopLossOrder);
       await stopLossBuySellOrderLog(order, slOrderRes);
       console.log(slOrderRes);
