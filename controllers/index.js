@@ -147,7 +147,7 @@ async function cancelSlandPlaceMarketOrder(order, openOrder) {
 
       order.slOrderStatus = "CANCELLED";
       let slOqty =
-        +order.cummulativeQuoteQty - (0.15 / +order.cummulativeQuoteQty) * 100;
+        +order.cummulativeQuoteQty - (0.15 / 100) * +order.cummulativeQuoteQty;
       let marketOrder = {
         newClientOrderId: order._id,
         symbol: order.pairName,
@@ -162,6 +162,7 @@ async function cancelSlandPlaceMarketOrder(order, openOrder) {
               ),
         sideEffectType: "AUTO_REPAY",
       };
+      console.log("Market Order", marketOrder);
       let cliRes = await client.marginOrder(marketOrder);
       console.log("Exit order res", cliRes);
       let ePrice = 0;
