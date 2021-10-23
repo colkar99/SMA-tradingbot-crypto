@@ -142,7 +142,9 @@ async function cancelSlandPlaceMarketOrder(order, openOrder) {
       });
       let currentPrice = await client.prices();
       let decimalCountLot = await getQuantityFloatNo(order.pairName);
-      // console.log(currentPrice[openOrder.symbol]);
+      console.log("Current Price", currentPrice[openOrder.symbol]);
+      console.log("Decimal count", decimalCountLot);
+
       order.slOrderStatus = "CANCELLED";
       let slOqty =
         +order.cummulativeQuoteQty - (0.15 / +order.cummulativeQuoteQty) * 100;
@@ -189,7 +191,7 @@ async function cancelSlandPlaceMarketOrder(order, openOrder) {
       res(result);
       //Place market order
     } catch (err) {
-      res(err);
+      rej(err);
       // console.log(err);
     }
   });
