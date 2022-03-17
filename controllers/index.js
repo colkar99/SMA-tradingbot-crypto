@@ -18,7 +18,7 @@ exports.login = async (req, res, next) => {
 };
 
 exports.postTradingView = async (req, res, next) => {
-  setTimeout(() => {
+  setTimeout(async () => {
     try {
       console.log("REQ DATA", req.body);
       req.body.tradeCurrencyType =
