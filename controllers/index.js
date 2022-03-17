@@ -18,46 +18,49 @@ exports.login = async (req, res, next) => {
 };
 
 exports.postTradingView = async (req, res, next) => {
-  try {
-    console.log("REQ DATA", req.body);
-    req.body.tradeCurrencyType =
-      req.body.ticker[req.body.ticker.length - 1] == "T" ? "USDT" : "BTC";
-    // let data = await findPositionSize(req.body);
-    await saveAlertFromTv(req, res, next);
-    // console.log(await getTotalCapitalVal());
-    // console.log(await client.marginAccountInfo());
+  setTimeout(() => {
+    try {
+      console.log("REQ DATA", req.body);
+      req.body.tradeCurrencyType =
+        req.body.ticker[req.body.ticker.length - 1] == "T" ? "USDT" : "BTC";
+      // let data = await findPositionSize(req.body);
+      await saveAlertFromTv(req, res, next);
+      // console.log(await getTotalCapitalVal());
+      // console.log(await client.marginAccountInfo());
 
-    // console.log(await findPositionSize(req.body, next));
-    if (req.body.message != "EXIT")
-      console.log(await findPositionSize(req.body));
+      // console.log(await findPositionSize(req.body, next));
+      if (req.body.message != "EXIT")
+        console.log(await findPositionSize(req.body));
 
-    //Buy
-    if (req.body.message == "ENTRY LONG") {
-      let result = await longEntry(req, res, next);
-      // console.log(await getFreeQuantity("IOST"));
+      //Buy
+      if (req.body.message == "ENTRY LONG") {
+        let result = await longEntry(req, res, next);
+        // console.log(await getFreeQuantity("IOST"));
 
-      //   await syncPairInfo();
-      let message = mailerFormatter.emailFormat("entryOrder", result);
-      mailer.sendMail("LONG ENTRY ORDER EXECUTED WITH SL ORDER", message);
+        //   await syncPairInfo();
+        let message = mailerFormatter.emailFormat("entryOrder", result);
+        mailer.sendMail("LONG ENTRY ORDER EXECUTED WITH SL ORDER", message);
+      }
+      //SELL
+      else if (req.body.message == "ENTRY SHORT") {
+        let result = await longEntry(req, res, next);
+        //   await syncPairInfo();
+        let message = mailerFormatter.emailFormat("entryOrder", result);
+        mailer.sendMail("SHORT ENTRY ORDER EXECUTED WITH SL ORDER", message);
+        // await placeSlOrder();
+      } //Exit
+      else if (req.body.message == "EXIT") {
+        console.log("Inside exit");
+        await exitEntry(req, res, next);
+      }
+
+      res.status(200).send("Order successfully placed");
+    } catch (err) {
+      next(err);
+      // console.log(err.statusMessage);
     }
-    //SELL
-    else if (req.body.message == "ENTRY SHORT") {
-      let result = await longEntry(req, res, next);
-      //   await syncPairInfo();
-      let message = mailerFormatter.emailFormat("entryOrder", result);
-      mailer.sendMail("SHORT ENTRY ORDER EXECUTED WITH SL ORDER", message);
-      // await placeSlOrder();
-    } //Exit
-    else if (req.body.message == "EXIT") {
-      console.log("Inside exit");
-      await exitEntry(req, res, next);
-    }
+  }, 5000)
 
-    res.status(200).send("Order successfully placed");
-  } catch (err) {
-    next(err);
-    // console.log(err.statusMessage);
-  }
 };
 
 //function for exit entry
@@ -157,9 +160,9 @@ async function cancelSlandPlaceMarketOrder(order, openOrder) {
           order.orderType == "BUY"
             ? toFixed(order.quantity, +decimalCountLot)
             : toFixed(
-                slOqty / currentPrice[openOrder.symbol],
-                +decimalCountLot
-              ),
+              slOqty / currentPrice[openOrder.symbol],
+              +decimalCountLot
+            ),
         sideEffectType: "AUTO_REPAY",
       };
       console.log("Market Order", marketOrder);
@@ -274,8 +277,8 @@ async function longEntry(req, res, next) {
           order.orderType == "BUY"
             ? "SELL"
             : order.orderType == "SELL"
-            ? "BUY"
-            : "",
+              ? "BUY"
+              : "",
         symbol: order.pairName,
         quantity: order.orderType == "BUY" ? order.quantity : slQty,
         type: "STOP_LOSS_LIMIT",
@@ -336,13 +339,10 @@ async function marketBuySellOrderLog(order, type = "") {
       var date = new Date("2021-08-22T01:13:00Z");
       const log = new Log({
         heading: `${type} MARKET ${order.orderType} order is placed`,
-        description: `${type} MARKET ${order.orderType} order is placed at ${
-          type == "EXIT" ? order.exitPrice : order.entryPrice
-        } with qty of ${
-          type == "EXIT" ? order.exitQuantity : order.quantity
-        } and order status is ${
-          type == "EXIT" ? order.exitOrderStatus : order.entryOrderStatus
-        } . Date:${date}`,
+        description: `${type} MARKET ${order.orderType} order is placed at ${type == "EXIT" ? order.exitPrice : order.entryPrice
+          } with qty of ${type == "EXIT" ? order.exitQuantity : order.quantity
+          } and order status is ${type == "EXIT" ? order.exitOrderStatus : order.entryOrderStatus
+          } . Date:${date}`,
         ticker: order.pairName,
         log: JSON.stringify(order),
       });
@@ -386,13 +386,11 @@ async function saveAlertFromTv(req) {
         req.body.message == "ENTRY SHORT" ||
         req.body.message == "ENTRY LONG"
       ) {
-        des = `${req.body.message} signal from ${req.body.ticker} at ${
-          req.body.entryprice
-        } and SL:${req.body.stopprice}. Date:${date.toGMTString()}`;
+        des = `${req.body.message} signal from ${req.body.ticker} at ${req.body.entryprice
+          } and SL:${req.body.stopprice}. Date:${date.toGMTString()}`;
       } else {
-        des = `${req.body.message} signal for ${
-          req.body.ticker
-        } at Market price. Date:${date.toGMTString()}`;
+        des = `${req.body.message} signal for ${req.body.ticker
+          } at Market price. Date:${date.toGMTString()}`;
       }
       const log = new Log({
         heading: req.body.message,
